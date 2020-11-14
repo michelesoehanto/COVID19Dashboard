@@ -547,12 +547,11 @@ def updatePie(month, date, country, who):
         
     elif month is not None:
     
-        listOfCumulativeCases = dataframe.loc[dataframe['Month'] == month]['Cumulative_cases'].tail(1)
+        listOfCumulative = dataframe.loc[dataframe['Month'] == month]['Cumulative_cases'].tail(1)
         listOfCumulativeDeaths = dataframe.loc[dataframe['Month'] == month]['Cumulative_deaths'].tail(1)
     else:
-        lastdate = '5 Nov 2020'
-        if who == "EURO":
-            lastdate = '4 Nov 2020'
+        
+        lastdate = '4 Nov 2020'
        
         listOfCumulativeCases = dataframe.loc[dataframe['Date_reported'] == lastdate]['Cumulative_cases']
         
