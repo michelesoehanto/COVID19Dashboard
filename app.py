@@ -16,8 +16,8 @@ import time
 #from tabs import tab_3
 
 ## data frame
-df = pd.read_csv("/Users/MicheleS/AppData/Local/Programs/Python/Python37/Dashboard_proj/WHO-COVID-19-global-data.csv",low_memory= False)
-dfcolor = pd.read_csv("/Users/MicheleS/AppData/Local/Programs/Python/Python37/Dashboard_proj/color-country.csv", engine="python", sep=',', dtype={'Country':'string', 'Color':'string'})
+df = pd.read_csv("WHO-COVID-19-global-data.csv",low_memory= False)
+dfcolor = pd.read_csv("color-country.csv", engine="python", sep=',', dtype={'Country':'string', 'Color':'string'})
 
 ## external scripts and external stylesheets
 external_stylesheets = [dbc.themes.BOOTSTRAP,'https://codepen.io/chriddyp/pen/bWLwgP.css']
