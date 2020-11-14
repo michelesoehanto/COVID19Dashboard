@@ -7,6 +7,7 @@ from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 import dash_table
 import plotly.graph_objs as go
+import time
 
 #different tabs
 #from tabs import tab_0
@@ -15,8 +16,8 @@ import plotly.graph_objs as go
 #from tabs import tab_3
 
 ## data frame
-df = pd.read_csv("/Users/MicheleS/AppData/Local/Programs/Python/Python37/Dashboard_proj/WHO-COVID-19-global-data.csv")
-dfcolor = pd.read_csv("/Users/MicheleS/AppData/Local/Programs/Python/Python37/Dashboard_proj/color-country.csv", engine="python", sep=',')
+df = pd.read_csv("/Users/MicheleS/AppData/Local/Programs/Python/Python37/Dashboard_proj/WHO-COVID-19-global-data.csv",low_memory= False)
+dfcolor = pd.read_csv("/Users/MicheleS/AppData/Local/Programs/Python/Python37/Dashboard_proj/color-country.csv", engine="python", sep=',', dtype={'Country':'string', 'Color':'string'})
 
 ## external scripts and external stylesheets
 external_stylesheets = [dbc.themes.BOOTSTRAP,'https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -125,26 +126,26 @@ first_layout = html.Div([
 
                dcc.Dropdown(id='WHO_dropdown', options=[
                         {'label': i, 'value': i} for i in df.WHO_region.unique()
-                    ],placeholder='Filter by Country_code',persistence = True, persistence_type = 'session')]), width = {"offset":1},md =2),
+                    ],value = "WPRO",placeholder='Filter by Region')]), width = {"offset":1},md =2),
         dbc.Col(
             html.Div([
 
                dcc.Dropdown(id='Country_dropdown', options=[
                         {'label': i, 'value': i} for i in df.Country.unique()
-                    ],placeholder='Filter by Country_code',persistence = True, persistence_type = 'session')]), md= 2),
+                    ],value = "Singapore", placeholder='Filter by Country')]), md= 2),
         dbc.Col(
             html.Div([
                 
                 dcc.Dropdown(id='Month_dropdown',  options=[
                         {'label': i, 'value': i} for i in df.Month.unique()
-                    ],placeholder='Filter by Date',persistence = True, persistence_type = 'session')]),md = 2),
+                    ],placeholder='Filter by Month')]),md = 2),
         
         dbc.Col(
             html.Div([
                 
                 dcc.Dropdown(id='Date_dropdown',  options=[
                         {'label': i, 'value': i} for i in df.Date_reported.unique()
-                    ],placeholder='Filter by Date',persistence = True, persistence_type = 'session')]),md = 2),
+                    ],placeholder='Filter by Date')]),md = 2),
         dbc.Col(
             html.Div([
                 html.Button('Clear', id='clear-button', n_clicks=0)])
@@ -207,16 +208,21 @@ app.layout = html.Div([
               [dash.dependencies.Input('clear-button', 'n_clicks')]
               )
 def clearWho(clicks):
-    print(clicks)
+    if clicks == 0:
+        return 'WPRO'
     if clicks !=0:
         return None
+    
     
 @app.callback(dash.dependencies.Output('Country_dropdown','value'),
               [dash.dependencies.Input('clear-button', 'n_clicks')]
               )
 def clearWho(clicks):
+    if clicks == 0:
+        return 'Singapore'
     if clicks !=0:
         return None
+    
 
 @app.callback(dash.dependencies.Output('Month_dropdown','value'),
               [dash.dependencies.Input('clear-button', 'n_clicks')]
@@ -372,7 +378,7 @@ def updateNoDeaths(month, date, country, who):
             if who == "EURO":
                 lastdate = '4 Nov 2020'
             dataframe = dataframe.loc[dataframe['Date_reported'] == lastdate]
-    print("AHHAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    
     val = dataframe['Cumulative_deaths'].sum()
     return str(val)
 
@@ -393,8 +399,10 @@ def updateNoDeaths(month, date, country, who):
               )
 
 def updateGraph(month,date,country,who):
+    time.sleep(1)
     dataframecolor = dfcolor
     count = 0
+   
     
    
     dataframe = df
@@ -483,8 +491,6 @@ def updateGraph(month,country,who):
     data = []
     d = dataframe.groupby('Country').agg({'New_deaths':'sum'}).sort_values('New_deaths').tail(3).index.values
     for i in d:
-        print(i)
-        print(type(i))
         frame = dataframe.loc[dataframe['Country'] == i]['New_deaths'].sum()
         
             
@@ -616,13 +622,7 @@ def updateBoxPlot(month,date,country,who):
         
         }
 
-@app.callback(Output("loading1", "children"),
-              
-              [Input("barchart1", "children")]
-              )
-def input_triggers_spinner(bar):
-    time.sleep(1)
-    return bar
+
 
 
 
