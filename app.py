@@ -285,13 +285,19 @@ def updateNewCases(month, date, country, who):
     if who is not None:
         dataframe = dataframe.loc[dataframe['WHO_region'] == who]
     if country is not None:
-        dataframe = dataframe.loc[dataframe['Country'] == country]
+        dataframes = dataframe.loc[dataframe['Country'] == country]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Country'] == country]
         
     if month is not None:
-        dataframe = dataframe.loc[dataframe['Month'] == month]
+        dataframes = dataframe.loc[dataframe['Month'] == month]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Month'] == month]
         
     if date is not None:
-        dataframe = dataframe.loc[dataframe['Date_reported'] == date]
+        dataframes = dataframe.loc[dataframe['Date_reported'] == date]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Date_reported'] == date]
     
     val = dataframe['New_cases'].sum()
     return str(val)
@@ -308,13 +314,19 @@ def updateNewCases(month, date, country, who):
     if who is not None:
         dataframe = dataframe.loc[dataframe['WHO_region'] == who]
     if country is not None:
-        dataframe = dataframe.loc[dataframe['Country'] == country]
+        dataframes = dataframe.loc[dataframe['Country'] == country]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Country'] == country]
         
     if month is not None:
-        dataframe = dataframe.loc[dataframe['Month'] == month]
+        dataframes = dataframe.loc[dataframe['Month'] == month]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Month'] == month]
         
     if date is not None:
-        dataframe = dataframe.loc[dataframe['Date_reported'] == date]
+        dataframes = dataframe.loc[dataframe['Date_reported'] == date]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Date_reported'] == date]
     
     val = dataframe['New_deaths'].sum()
     return str(val)
@@ -326,25 +338,39 @@ def updateNewCases(month, date, country, who):
                Input("Country_dropdown", "value"),
                Input("WHO_dropdown", "value")]
               )
-def updateNewCases(month, date, country, who):
+def updateNoCases(month, date, country, who):
+    print(month)
+    print(date)
+    print(country)
+    print(who)
     dataframe = df
     if who is not None:
         dataframe = dataframe.loc[dataframe['WHO_region'] == who]
     if country is not None:
-        dataframe = dataframe.loc[dataframe['Country'] == country]
+        dataframes = dataframe.loc[dataframe['Country'] == country]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Country'] == country]
         
     if month is not None:
-        dataframe = dataframe.loc[dataframe['Month'] == month]
+        dataframes = dataframe.loc[dataframe['Month'] == month]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Month'] == month]
         
     if date is not None:
-        dataframe = dataframe.loc[dataframe['Date_reported'] == date]
+        dataframes = dataframe.loc[dataframe['Date_reported'] == date]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Date_reported'] == date]
     else:
         if month is not None:
-            dataframe= dataframe.tail(1)
+            dataframe = dataframe.loc[dataframe['Month'] == month]['Cumulative_cases'].tail(1).sum()
+            print(dataframe)
+            return dataframe
+            
         else:
-            lastdate = '5 Nov 2020'
-            if who == "EURO":
-                lastdate = '4 Nov 2020'
+            lastdate = '5-Nov-20'
+            dataframes = dataframe.loc[dataframe['Date_reported'] == lastdate]
+            if dataframes.empty:
+                lastdate = '4-Nov-20'
             dataframe = dataframe.loc[dataframe['Date_reported'] == lastdate]
 
     val = dataframe['Cumulative_cases'].sum()
@@ -363,20 +389,28 @@ def updateNoDeaths(month, date, country, who):
     if who is not None:
         dataframe = dataframe.loc[dataframe['WHO_region'] == who]
     if country is not None:
-        dataframe = dataframe.loc[dataframe['Country'] == country]
+        dataframes = dataframe.loc[dataframe['Country'] == country]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Country'] == country]
         
     if month is not None:
-        dataframe = dataframe.loc[dataframe['Month'] == month]
+        dataframes = dataframe.loc[dataframe['Month'] == month]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Month'] == month]
         
     if date is not None:
-        dataframe = dataframe.loc[dataframe['Date_reported'] == date]
+        dataframes = dataframe.loc[dataframe['Date_reported'] == date]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Date_reported'] == date]
     else:
         if month is not None:
-            dataframe= dataframe.tail(1)
+            dataframe = dataframe.loc[dataframe['Month'] == month]['Cumulative_deaths'].tail(1).sum()
+            return dataframe
         else:
-            lastdate = '5 Nov 2020'
-            if who == "EURO":
-                lastdate = '4 Nov 2020'
+            lastdate = '5-Nov-20'
+            dataframes = dataframe.loc[dataframe['Date_reported'] == lastdate]
+            if dataframes.empty:
+                lastdate = '4-Nov-20'
             dataframe = dataframe.loc[dataframe['Date_reported'] == lastdate]
     
     val = dataframe['Cumulative_deaths'].sum()
@@ -395,16 +429,22 @@ def updateNoDeaths(month, date, country, who):
               [Input("Month_dropdown", "value"),
                Input("Date_dropdown", "value"),
                Input("Country_dropdown", "value"),
-               Input("WHO_dropdown", "value")]
+               Input("WHO_dropdown", "value")],
+              [State("Month_dropdown", "value"),
+               State("Date_dropdown", "value"),
+               State("Country_dropdown", "value"),
+               State("WHO_dropdown", "value")]
               )
 
-def updateGraph(month,date,country,who):
+def updateGraph(month1,date1,country1,who1,month,date,country,who):
     time.sleep(1)
     dataframecolor = dfcolor
     count = 0
-   
+    #print(month)
+    #print(date)
+    #print(country)
+   # print(who)
     
-   
     dataframe = df
     layout = go.Layout(
                       
@@ -423,13 +463,20 @@ def updateGraph(month,date,country,who):
     if who is not None:
         dataframe = dataframe.loc[dataframe['WHO_region'] == who]
     if country is not None:
-        dataframe = dataframe.loc[dataframe['Country'] == country]
+        dataframes = dataframe.loc[dataframe['Country'] == country]
+        
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Country'] == country]
         
     if month is not None:
-        dataframe = dataframe.loc[dataframe['Month'] == month]
+        dataframes = dataframe.loc[dataframe['Month'] == month]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Month'] == month]
         
     if date is not None:
-        dataframe = dataframe.loc[dataframe['Date_reported'] == date]
+        dataframes = dataframe.loc[dataframe['Date_reported'] == date]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Date_reported'] == date]
     data = []
 
     
@@ -456,10 +503,12 @@ def updateGraph(month,date,country,who):
               
               [Input("Month_dropdown", "value"),
                Input("Country_dropdown", "value"),
-               Input("WHO_dropdown", "value")]
+               Input("WHO_dropdown", "value")],
+              
+              
               )
 
-def updateGraph(month,country,who):
+def updateGraph(month, country, who):
     dataframecolor = dfcolor
     count = 0
     color = 0
@@ -482,10 +531,18 @@ def updateGraph(month,country,who):
     if who is not None:
         dataframe = dataframe.loc[dataframe['WHO_region'] == who]
         
-    if month is not None:
-        dataframe = dataframe.loc[dataframe['Month'] == month]
     if country is not None:
-        dataframe = dataframe.loc[dataframe['Country'] == country]
+        dataframes = dataframe.loc[dataframe['Country'] == country]
+        
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Country'] == country]
+        
+    if month is not None:
+        
+        dataframes = dataframe.loc[dataframe['Month'] == month]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Month'] == month]
+    
     
     
     data = []
@@ -516,11 +573,15 @@ def updateGraph(month,country,who):
               [Input("Month_dropdown", "value"),
                Input("Date_dropdown", "value"),
                Input("Country_dropdown", "value"),
-               Input("WHO_dropdown", "value")]
+               Input("WHO_dropdown", "value")],
+              
               )
 
 def updatePie(month, date, country, who):
     dataframe = df
+    
+
+    
     layout = go.Layout(
                       
                        
@@ -534,32 +595,62 @@ def updatePie(month, date, country, who):
                        title= 'Fatality Rate',
               
               showlegend=True)
-   
-    if country is not None:
-        dataframe = dataframe.loc[dataframe['Country'] == country]
+    
     if who is not None:
         dataframe = dataframe.loc[dataframe['WHO_region'] == who]
-        
-    if date is not None:
-        dataframe = dataframe.loc[dataframe['Date_reported'] == date]
         listOfCumulativeCases = dataframe['Cumulative_cases']
         listOfCumulativeDeaths = dataframe['Cumulative_deaths']
+   
+    if country is not None:
+        dataframes = dataframe.loc[dataframe['Country'] == country]
         
-    elif month is not None:
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Country'] == country]
+            listOfCumulativeCases = dataframe['Cumulative_cases']
+            listOfCumulativeDeaths = dataframe['Cumulative_deaths']
+
+            
     
-        listOfCumulative = dataframe.loc[dataframe['Month'] == month]['Cumulative_cases'].tail(1)
-        listOfCumulativeDeaths = dataframe.loc[dataframe['Month'] == month]['Cumulative_deaths'].tail(1)
+   
+    if month is not None:
+        dataframes =dataframe.loc[dataframe['Month'] == month]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Month'] == month]
+            listOfCumulativeCases = dataframe.loc[dataframe['Month'] == month]['Cumulative_cases'].tail(1)
+            listOfCumulativeDeaths = dataframe.loc[dataframe['Month'] == month]['Cumulative_deaths'].tail(1)
+            
+            
+            
+        
+    elif date is not None:
+        dataframes = dataframe.loc[dataframe['Date_reported'] == date]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Date_reported'] == date]
+            listOfCumulativeCases = dataframe['Cumulative_cases']
+            listOfCumulativeDeaths = dataframe['Cumulative_deaths']
+
     else:
         lastdate = '5-Nov-20'
-        if who == "EURO":
-            lastdate = '4-Nov-2020'
-       
+        dataframes = dataframe.loc[dataframe['Date_reported'] == lastdate]
+        if dataframes.empty:
+            lastdate = '4-Nov-20'
+        
         listOfCumulativeCases = dataframe.loc[dataframe['Date_reported'] == lastdate]['Cumulative_cases']
         
         listOfCumulativeDeaths = dataframe.loc[dataframe['Date_reported'] == lastdate]['Cumulative_deaths']
-        
+        #print("5 nov 20")
+       # print(listOfCumulativeDeaths)
+    if date is not None:
+        dataframes = dataframe.loc[dataframe['Date_reported'] == date]
+        #print(dataframes)
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Date_reported'] == date]
+            listOfCumulativeCases = dataframe['Cumulative_cases']
+            listOfCumulativeDeaths = dataframe['Cumulative_deaths']
+    #print(listOfCumulativeCases)
     sumOfCumulativeCases = listOfCumulativeCases.sum()    
     sumOfCumulativeDeaths = listOfCumulativeDeaths.sum()
+    
 
     
 
@@ -600,14 +691,20 @@ def updateBoxPlot(month,date,country,who):
                        title= 'Distribution of New Cases and New Deaths',
               
               showlegend=True)
-    if month is not None:
-        dataframe = dataframe.loc[dataframe['Month'] == month]
-    if country is not None:
-        dataframe = dataframe.loc[dataframe['Country'] == country]
     if who is not None:
         dataframe = dataframe.loc[dataframe['WHO_region'] == who]
+    if country is not None:
+        dataframes =dataframe.loc[dataframe['Country'] == country]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Country'] == country]
+    if month is not None:
+        dataframes =dataframe.loc[dataframe['Month'] == month]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Month'] == month]
     if date is not None:
-        dataframe = dataframe.loc[dataframe['Date_reported'] == date]
+        dataframes = dataframe.loc[dataframe['Date_reported'] == date]
+        if not dataframes.empty:
+            dataframe = dataframe.loc[dataframe['Date_reported'] == date]
     
     trace1 = go.Box(y = dataframe.New_cases, name = "New cases", marker = dict(color = 'blue'),line = dict(color = 'rgb(7,40,89)'))
     trace2 = go.Box(y = dataframe.New_deaths, name = "New Deaths", marker = dict(color = 'red'),line = dict(color = 'rgb(7,40,89)'))
